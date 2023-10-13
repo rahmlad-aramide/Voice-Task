@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import Todos from './ToDos';
+import Todos from './Todos';
 
 // eslint-disable-next-line react/prop-types
 const TaskCard = ({ background, priority, taskTitle, completed = false}) => {
