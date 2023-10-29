@@ -69,6 +69,7 @@ const TaskCard = ({ id, background, priority, taskTitle, subtasks, changeTaskSta
       </div>
       {isOpen &&
         <div className='flex flex-col pt-6 gap-3'>
+          {subtasks.length === 0 && "No subtask under this task yet!"}
           {subtasks.map((t, index) => (
             <Todos key={index} id={t._id} completed={completed} done={completed ? true : t.completed} todo={t.todo} />
           ))}
