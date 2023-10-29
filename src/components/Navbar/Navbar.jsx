@@ -2,6 +2,7 @@ import { Link, Outlet } from 'react-router-dom';
 import SearchBar from './SearchBar'
 
 const Navbar = () => {
+  
   return (
     <div className="flex flex-col">
       <div>

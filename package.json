@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@ibnlanre/portal": "^3.16.0-beta",
+    "@tanstack/react-query": "^5.0.5",
     "axios": "^1.5.1",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
@@ -19,6 +21,7 @@
     "react-transition-group": "^4.4.5"
   },
   "devDependencies": {
+    "@types/node": "^20.8.9",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@vitejs/plugin-react": "^4.0.3",

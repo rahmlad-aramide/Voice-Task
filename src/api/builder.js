@@ -1,0 +1,23 @@
+import { createBuilder } from "@ibnlanre/portal";
+import { AUTHAPI, USETOKEN } from "./axios-config";
+
+// let taskId;
+export const builder = createBuilder({
+  auth: {
+    signup: (data) => AUTHAPI.post('/api/v1/auth/signup', data),
+    signin:   (data) => AUTHAPI.post('/api/v1/auth/signin', data),
+  },
+  task: {
+    create_task: (data) => USETOKEN.post('/api/v1/task', data),
+    get_tasks: () => USETOKEN.get(`/api/v1/task`),
+    get_task: (taskId) => USETOKEN.get(`/api/v1/task/${taskId}`),
+    change_task_status: (taskId) => USETOKEN.patch(`/api/v1/task/${taskId}/status`),
+    change_task_priority: (taskId) => USETOKEN.patch(`/api/v1/task/${taskId}/priority`),
+    change_task_title: (taskId, data) => USETOKEN.patch(`/api/v1/task/${taskId}/title`, data),
+    delete_task: (taskId) => USETOKEN.delete(`/api/v1/task/${taskId}`),
+    add_subtask: (taskId, data) => USETOKEN.put(`/api/v1/task/${taskId}/subtask`, data),
+    change_subtask_status: (taskId, subtaskId, data) => USETOKEN.patch(`/api/v1/task/${taskId}/substack/status?subtaskId=${subtaskId}`, data),
+    change_subtask_todo: (taskId, subtaskId, data) => USETOKEN.patch(`/api/v1/task/${taskId}/substack/todo?subtaskId=${subtaskId}`, data),
+    delete_subtask: (taskId, subtaskId, data) => USETOKEN.delete(`/api/v1/task/${taskId}/substack?subtaskId=${subtaskId}`, data),
+  }
+})
