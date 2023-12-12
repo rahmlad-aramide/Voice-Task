@@ -10,7 +10,7 @@ const Home = () => {
     <div className="flex h-screen items-center justify-center">
       <ToastContainer />
       <div className="max-w-lg text-center">
-        <h1 className="mb-8 text-7xl font-extrabold text-primary">
+        <h1 className="mb-8 text-5xl md:text-7xl font-extrabold text-primary">
           Voice Task
         </h1>
         <p className="mb-8 px-4 text-lg font-medium">
