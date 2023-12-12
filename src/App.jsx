@@ -1,11 +1,14 @@
 import { Route, Routes } from 'react-router-dom'
 import './App.css'
 import './assets/fonts/AeonikTRIAL.css'
-import { Dashboard, Error, Home, SignIn, SignUp } from './pages'
+import ChangePriority from './pages/Dashboard/ChangePriority'
+import { Error, Home, SignIn, SignUp } from './pages'
 import { Navbar } from './components'
 import { ProtectedRoute } from './utils'
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query'
-import SearchContextProvider from './contexts/SearchContext/SearchContext'
+import { AuthProvider, SearchProvider } from './contexts'
+
+import "react-toastify/dist/ReactToastify.css";
 
 const queryClient = new QueryClient()
 
@@ -13,19 +16,22 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <SearchContextProvider>
-        <Routes>
-          <Route path='/' element={<Navbar />}>
-            <Route path="*" element={<Error />} />
-            <Route index element={<Home />} />
-            <Route element={<ProtectedRoute />}>
-              <Route path='/dashboard' element={<Dashboard />} />
+      <SearchProvider>
+        <AuthProvider>
+          <Routes>
+            <Route path='/' element={<Navbar />}>
+              <Route path="*" element={<Error />} />
+              <Route element={<ProtectedRoute />}>
+                <Route index element={<Home />} />
+                {/* <Route path='/dashboard' element={<Dashboard />} /> */}
+              </Route>
+              <Route path="/test" element={<ChangePriority />} />
             </Route>
-          </Route>
-          <Route path='/login' element={<SignIn />} />
-          <Route path='/register' element={<SignUp />} />
-        </Routes>
-      </SearchContextProvider>
+            <Route path='/login' element={<SignIn />} />
+            <Route path='/register' element={<SignUp />} />
+          </Routes>
+        </AuthProvider>
+      </SearchProvider>
     </QueryClientProvider>
   )
 }

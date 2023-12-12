@@ -1,46 +1,204 @@
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import signUpImage from "../../assets/images/signup-img.png";
+import bottomWave from "../../assets/images/bottom-wave.svg";
+import { useMutation } from "@tanstack/react-query";
+import { builder } from "../../api/builder";
+import {
+  notify,
+  error,
+  warn,
+} from "../../utils/toast";
+import { Loader } from "../../utils";
+import { ToastContainer } from "react-toastify";
+
+const defaultFields = {
+  name: "",
+  username: "",
+  password: "",
+  email: "",
+  confirmPassword: "",
+};
+
 const SignUp = () => {
+  const navigate = useNavigate();
+  const [fields, setFields] = useState(defaultFields);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFields({
+      ...fields,
+      [name]: value,
+    });
+  };
+
+  // Signup
+  const { mutate, isPending } = useMutation({
+    // mutationKey: builder.auth.signup.get(),
+    mutationFn: builder.use().auth.signup,
+    onSuccess(data) {
+      console.log(data);
+      notify("Successful! You're being redirected");
+      setFields(defaultFields);
+      setTimeout(() => {
+        navigate("/login");
+      }, 2000);
+    },
+    onError(err) {
+      console.log("Error while logging you in:", err);
+      error(`Error: ${err.response.data.message}`);
+    },
+  });
+  // const handleSignup = () => {
+  //   if (fields.password !== fields.confirmPassword) {
+  //     warn("Password doesn't match!");
+  //     return;
+  //   }
+  //   mutate(fields);
+  // };
+
   return (
-    <div>
-      <div className="w-[1440px] h-[1024px] relative bg-white">
-  <div className="left-[70px] top-[56px] absolute text-fuchsia-500 text-[26px] font-medium font-['Aeonik']">VoiceTask</div>
-  <div className="left-[70px] top-[307px] absolute flex-col justify-start items-start gap-8 inline-flex">
-    <div className="py-2.5 justify-center items-center gap-2.5 inline-flex">
-      <div className="text-teal-950 text-opacity-90 text-[25px] font-normal font-['Aeonik']">Signup to get started</div>
-    </div>
-    <div className="p-6 bg-fuchsia-300 bg-opacity-20 rounded-lg flex-col justify-start items-start gap-6 flex">
-      <div className="flex-col justify-start items-start gap-2 flex">
-        <div className="text-black text-opacity-80 text-sm font-normal font-['Aeonik']">Email</div>
-        <div className="w-[594px] h-11 px-[23px] py-4 bg-white rounded border border-neutral-600 border-opacity-20 justify-start items-center gap-2.5 inline-flex">
-          <div className="text-neutral-600 text-opacity-70 text-sm font-normal font-['Aeonik']">*******@gmail.com</div>
-        </div>
-      </div>
-      <div className="flex-col justify-start items-start gap-6 flex">
-        <div className="flex-col justify-start items-start gap-2 flex">
-          <div className="text-black text-opacity-80 text-sm font-normal font-['Aeonik']">Password</div>
-          <div className="w-[594px] h-11 px-6 py-4 bg-white rounded border border-neutral-600 border-opacity-20 justify-start items-center gap-2.5 inline-flex">
-            <div className="text-neutral-600 text-opacity-70 text-sm font-normal font-['Aeonik']">Your Password</div>
+    <div className="relative h-full md:h-screen">
+      <ToastContainer />
+      <div className="w-[90%] max-w-[1200px] mx-auto h-full">
+        <h1 className="text-[26px] text-primary font-medium pt-4 md:py-5">
+          <Link to="/">Voice Task</Link>
+        </h1>
+        <div className="flex flex-col md:flex-row justify-around items-center h-[calc(100%_-_170px)]">
+          <div className="order-1 md:order-0 py-4 md:my-0 w-full md:w-1/2 overflow-y-auto h-full">
+            <h2 className="text-teal-950 text-[25px] mb-8 md:my-4 text-center md:text-left">
+              Signup to get started
+            </h2>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (fields.password !== fields.confirmPassword) {
+                  warn("Password doesn't match!");
+                  return;
+                }
+                mutate(fields);
+              }}
+              className="flex flex-col md:ml-0 gap-6 p-6 rounded-lg bg-[#e8b8ff26] w-full max-w-[90%] mx-auto"
+            >
+              <div className="flex flex-col">
+                <label htmlFor="name" className="mb-2 text-sm text-black/80">
+                  Full Name
+                </label>
+                <input
+                  type="text"
+                  id="name"
+                  placeholder="Enter your fullname here"
+                  name="name"
+                  value={fields.name}
+                  onChange={handleChange}
+                  className="border border-[#4a4a4733] rounded px-4 py-2 text-sm outline-none focus:border-primary"
+                  min={3}
+                  required
+                />
+              </div>
+              <div className="flex flex-col">
+                <label
+                  htmlFor="username"
+                  className="mb-2 text-sm text-black/80"
+                >
+                  Username
+                </label>
+                <input
+                  type="text"
+                  id="username"
+                  placeholder="Enter your username here"
+                  name="username"
+                  value={fields.username}
+                  onChange={handleChange}
+                  className="border border-[#4a4a4733] rounded px-4 py-2 text-sm outline-none focus:border-primary"
+                  min={5}
+                  required
+                />
+              </div>
+              <div className="flex flex-col">
+                <label htmlFor="email" className="mb-2 text-sm text-black/80">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  placeholder="Enter your email address here"
+                  name="email"
+                  value={fields.email}
+                  onChange={handleChange}
+                  className="border border-[#4a4a4733] rounded px-4 py-2 text-sm outline-none focus:border-primary"
+                  required
+                />
+              </div>
+              <div className="flex flex-col">
+                <label
+                  htmlFor="password"
+                  className="mb-2 text-sm text-black/80"
+                >
+                  Password
+                </label>
+                <input
+                  type="password"
+                  id="password"
+                  placeholder="Create your new password"
+                  name="password"
+                  value={fields.password}
+                  onChange={handleChange}
+                  className="border border-[#4a4a4733] rounded px-4 py-2 text-sm outline-none focus:border-primary"
+                  min={4}
+                  required
+                />
+              </div>
+              <div className="flex flex-col">
+                <label
+                  htmlFor="confirmPassword"
+                  className="mb-2 text-sm text-black/80"
+                >
+                  Password
+                </label>
+                <input
+                  type="password"
+                  id="confirmPassword"
+                  placeholder="Confirm your new password"
+                  name="confirmPassword"
+                  value={fields.confirmPassword}
+                  onChange={handleChange}
+                  className="border border-[#4a4a4733] rounded px-4 py-2 text-sm outline-none focus:border-primary"
+                  min={4}
+                  required
+                />
+              </div>
+              <button
+                disabled={isPending}
+                type="submit"
+                className="bg-primary hover:bg-transparent disabled:scale-100 disabled:hover:bg-primary border border-primary text-white hover:text-primary active:scale-90 transition duration-200 font-medium p-2 rounded"
+              >
+                {isPending ? <Loader /> : "Signup"}
+              </button>
+              <div className="text-sm text-black/70 text-center">
+                Already have an account?{" "}
+                <Link
+                  to="/login"
+                  className="hover:underline text-primary/90 font-medium"
+                >
+                  Sign in
+                </Link>
+              </div>
+            </form>
+          </div>
+          <div className="flex order-0 md:order-1">
+            <div>
+              <img src={signUpImage} alt="#" className="max-h-[470px] mt-10" />
+            </div>
           </div>
         </div>
-        <div className="text-fuchsia-500 text-opacity-90 text-sm font-medium font-['Aeonik']">Forgot Password</div>
+        <img
+          src={bottomWave}
+          className="w-full absolute left-0 bottom-0 -z-10"
+        />
       </div>
-      <div className="w-[594px] h-[52px] px-[286px] py-4 bg-fuchsia-500 bg-opacity-90 rounded justify-center items-center gap-2.5 inline-flex">
-        <div className="text-white text-base font-medium font-['Aeonik']">Signup</div>
-      </div>
     </div>
-  </div>
-  <div className="w-[550px] h-[572.08px] left-[820px] top-[226px] absolute">
-    <div className="w-[545px] h-[567.56px] left-[1.06px] top-[3.89px] absolute">
-    </div>
-    <div className="w-[142.26px] h-[213.59px] left-[1.06px] top-[357.87px] absolute">
-    </div>
-    <div className="w-[466.13px] h-[321.26px] left-[40.73px] top-[35.77px] absolute">
-    </div>
-    <div className="w-[179.40px] h-[501.94px] left-[370.60px] top-[68.87px] absolute">
-    </div>
-  </div>
-</div>
-    </div>
-  )
-}
+  );
+};
 
-export default SignUp
+export default SignUp;

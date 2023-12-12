@@ -5,9 +5,11 @@ import PriorityModal from './PriorityModal';
 import TitleModal from './TitleModal';
 import DeleteModal from './DeleteModal';
 import { Loader } from '../../utils';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { builder } from '../../api/builder';
 
 // eslint-disable-next-line react/prop-types
-const TaskCard = ({ id, background, priority, taskTitle, subtasks, changeTaskStatus, isChangingTaskStatus, completed = false, changePriority, changeTitle, deleteTask, addSubtask, isAddingSubtask }) => {
+const TaskCard = ({ id, background, priority, taskTitle, subtasks, changeTaskStatus, isChangingTaskStatus, completed = false, changePriority, changeTitle, deleteTask }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [openMore, setOpenMore] = useState(false);
   const [isStarred, setIsStarred] = useState(false);
@@ -16,6 +18,19 @@ const TaskCard = ({ id, background, priority, taskTitle, subtasks, changeTaskSta
   const [titleModal, setTitleModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
   const [newSubtask, setNewSubtask] = useState('');
+
+  const queryClient = useQueryClient()
+  const { mutate: addSubtask, isPending: isAddingSubtask } = useMutation({
+    mutationFn: builder.use().task.add_subtask,
+    onSettled: (data)=>console.log(data),
+    onSuccess() {
+      queryClient.invalidateQueries(builder.task.get_tasks.get())
+    },
+    onError(err) {
+      console.log("Error while adding subtask:", err);
+      // toast.error("invalid input");
+    },
+  });
 
   const handleOpen = () => {
     setIsOpen(!isOpen)
@@ -30,9 +45,9 @@ const TaskCard = ({ id, background, priority, taskTitle, subtasks, changeTaskSta
     setSubTaskModal(!subtaskModal)
   }
   const priorityColors = {
-    High: "bg-red-500",
-    Medium: "bg-yellow-500",
-    Low: "bg-green-500",
+    high: "bg-red-500",
+    medium: "bg-yellow-500",
+    low: "bg-green-500",
     false: "bg-gray-400"
   }
   const handlePriorityModal = () => {
@@ -44,16 +59,14 @@ const TaskCard = ({ id, background, priority, taskTitle, subtasks, changeTaskSta
   const handleDeleteModal = () => {
     setDeleteModal(!deleteModal)
   }
-  const newTodo = JSON.stringify({"todo": `${newSubtask}`})
 
-  console.log(newTodo)
   return (
     <div className="flex flex-col py-3 px-4" style={{ backgroundColor: background }}>
       <div className="flex justify-between w-full">
         <div className='flex'>
           <div className="flex items-center">
             <div className={`w-2.5 h-2.5 rounded-full mr-2 ${!completed ? priorityColors[priority] : "bg-[#4a4a477f]"}`}></div>
-            <div className={completed ? `text-[#4a4a477f]` : `text-secondary`}>{priority}</div>
+            {/* <div className={completed ? `text-[#4a4a477f]` : `text-secondary`}>{priority}</div> */}
           </div>
           <div onClick={handleTitleModal} className={completed ? `text-[#4a4a477f]` : `text-secondary`}>
             {taskTitle}
@@ -69,29 +82,35 @@ const TaskCard = ({ id, background, priority, taskTitle, subtasks, changeTaskSta
       </div>
       {isOpen &&
         <div className='flex flex-col pt-6 gap-3'>
-          {subtasks.length === 0 && "No subtask under this task yet!"}
-          {subtasks.map((t, index) => (
+          {subtasks?.length === 0 && "No subtask under this task yet!"}
+          {subtasks?.map((t, index) => (
             <Todos key={index} id={t._id} completed={completed} done={completed ? true : t.completed} todo={t.todo} />
           ))}
           {subtaskModal &&
-            <form onSubmit={(e)=>{
-              e.preventDefault();
-              addSubtask(id, newTodo)
-              // setNewSubtask('')
-            }} className="flex">
-              <input type='text' value={newSubtask} onChange={(e)=>setNewSubtask(e.target.value)} placeholder='Enter a new subtask here' className='px-1 w-[90%]' />
-              <button onClick={addSubtask} disabled={isAddingSubtask} className={`flex shrink-0 ml-2 rounded px-2 shadow active:scale-100 hover:scale-90 scale-100`} style={{ backgroundColor: background }}>
-              {isAddingSubtask ? <Loader color={'#033835'} /> : "Add Subtask"}
+            <form 
+              onSubmit={
+                (e) => {
+                  e.preventDefault();
+                  addSubtask({
+                    taskId: id, 
+                    data: {"todo": newSubtask }
+                  });
+                  setNewSubtask('')
+                  handleSubTask()
+                }
+              }
+            className="flex">
+              <input type='text' name="todo" value={newSubtask} onChange={(e) => setNewSubtask(e.target.value)} placeholder='Enter a new subtask here' className='px-1 w-[90%]' />
+              <button type="submit"
+                disabled={isAddingSubtask} className={`flex shrink-0 ml-2 rounded px-2 shadow active:scale-100 hover:scale-90 scale-100`} style={{ backgroundColor: background }}>
+                {isAddingSubtask ? <Loader color={'#033835'} /> : "Add Subtask"}
               </button>
             </form>
           }
+          {isAddingSubtask && <div className="flex text-gray-500"> <Loader color="#00000050" /> Adding new subtask...</div>}
           <div className="flex justify-between mt-3 px-1">
             <div>
               <button className={`mr-5 transition duration-200 ${subtaskModal && 'rotate-45'}`} onClick={handleSubTask}>
-                {/* <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                    <path d="M12.5 5.83331H15C15.5472 5.83331 16.089 5.94109 16.5945 6.15048C17.1 6.35988 17.5594 6.66679 17.9463 7.0537C18.3332 7.44061 18.6401 7.89994 18.8495 8.40547C19.0589 8.91099 19.1667 9.45281 19.1667 9.99998C19.1667 10.5472 19.0589 11.089 18.8495 11.5945C18.6401 12.1 18.3332 12.5593 17.9463 12.9463C17.5594 13.3332 17.1 13.6401 16.5945 13.8495C16.089 14.0589 15.5472 14.1666 15 14.1666H12.5M7.5 14.1666H5C4.45282 14.1666 3.91101 14.0589 3.40548 13.8495C2.89996 13.6401 2.44063 13.3332 2.05372 12.9463C1.27232 12.1649 0.833332 11.105 0.833332 9.99998C0.833332 8.89491 1.27232 7.8351 2.05372 7.0537C2.83512 6.2723 3.89493 5.83331 5 5.83331H7.5" stroke="#033835" strokeOpacity="0.85" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M6.66667 10H13.3333" stroke="#033835" strokeOpacity="0.85" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg> */}
                 <svg fill="#033835" fillOpacity="0.85" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
                   width="20px" height="20px" viewBox="0 0 45.402 45.402"
                   xmlSpace="preserve">

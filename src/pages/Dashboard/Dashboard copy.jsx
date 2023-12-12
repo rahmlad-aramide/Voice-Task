@@ -1,4 +1,3 @@
-// import { AddBar, RecorderModal, TaskCard } from '../../components'
 import { AddBar, TaskCard } from '../../components'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
@@ -19,7 +18,7 @@ const Dashboard = () => {
   const filteredData = data?.filter((d) => d.title.toLowerCase().includes(searchValue.toLowerCase()))
 
   // Change Task Status
-  const { mutate: changeTaskStatus, isPending: isChangingTaskStatus } = useMutation({
+  const { mutate: changeTaskStatus, isChangingTaskStatus } = useMutation({
     mutationFn: builder.use().task.change_task_status,
     onSuccess(data) {
       console.log(data)
@@ -31,7 +30,7 @@ const Dashboard = () => {
     },
   });
   // Change Priority
-  const { mutate: changePriority, isPending: isChangingPriority } = useMutation({
+  const { mutate: changePriority, isChangingPriority } = useMutation({
     mutationFn: builder.use().task.change_task_priority,
     onSuccess(data) {
       console.log(data)
@@ -43,7 +42,7 @@ const Dashboard = () => {
     },
   });
   // Change Title
-  const { mutate: changeTitle, isPending: isChangingTitle } = useMutation({
+  const { mutate: changeTitle, isChangingTitle } = useMutation({
     mutationFn: builder.use().task.change_task_title,
     onSuccess(data) {
       console.log(data)
@@ -70,7 +69,6 @@ const Dashboard = () => {
   
   const completedTasks = filteredData?.filter((d) => d.completed === true)
   const incompletedTasks = filteredData?.filter((d) => d.completed === false)
-  console.log(incompletedTasks)
 
   return (
     <div className="w-[90%] max-w-[992px] mx-auto">
@@ -105,7 +103,6 @@ const Dashboard = () => {
             <TaskCard key={index} id={t._id} background={"#dfded17f"} priority={t.priority} taskTitle={t.title} completed={true} />
           ))}
         </div>
-        {/* <RecorderModal /> */}
       </div>
     </div>
   )

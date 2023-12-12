@@ -25,12 +25,11 @@ const AddBar = () => {
   }
 
   // use case of useMutation
-  const { mutate, isLoading } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationFn: builder.use().task.create_task,
     onSuccess(data) {
       console.log(data)
       queryClient.invalidateQueries(builder.task.get_tasks.get())
-      // push("/home");
       // toast.success("login successful");
       // cookieStorage.setItem("my-user", JSON.stringify(data.data));
       resetFormFields();
@@ -98,8 +97,8 @@ const AddBar = () => {
           </button>
         </div>
         <div>
-          <button type="submit" disabled={isLoading} className="bg-[#e8b8ff99] py-1 px-2 transition duration-200 hover:scale-90 active:scale-100">
-            {isLoading ? <Loader color={'#033835'} /> : "Add Task"}
+          <button type="submit" disabled={isPending} className="bg-[#e8b8ff99] py-1 px-2 transition duration-200 hover:scale-90 active:scale-100">
+            {isPending ? <Loader color={'#033835'} /> : "Add Task"}
           </button>
         </div>
       </div>

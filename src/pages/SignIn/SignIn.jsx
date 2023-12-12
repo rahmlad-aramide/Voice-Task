@@ -1,52 +1,114 @@
+import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom';
+import signInImage from '../../assets/images/signin-img.png'
+import bottomWave from '../../assets/images/bottom-wave.svg'
+import { builder } from '../../api/builder';
+import { useMutation } from '@tanstack/react-query';
+import { error, notify } from '../../utils/toast';
+import { Loader } from '../../utils';
+import { cookieStorage } from '@ibnlanre/portal';
+import { ToastContainer } from 'react-toastify';
+
+const defaultFields = {
+  email: '',
+  password: '',
+}
+
 const SignIn = () => {
+  const navigate = useNavigate();
+  const [fields, setFields] = useState(defaultFields)
+  const handleChange = (e) => {
+    const { name, value } = e.target
+    setFields({
+      ...fields,
+      [name]: value
+    })
+  }
+  // Login mutation function
+  const { mutate, isPending } = useMutation({
+    // mutationKey: builder.auth.signup.get(),
+    mutationFn: builder.use().auth.signin,
+    onSuccess(response) {
+      cookieStorage.setItem('token', response.data.token)
+      console.log(response);
+      notify("Successful! You're being redirected");
+      setFields(defaultFields);
+      setTimeout(() => {
+        navigate("/");
+      }, 2000);
+    },
+    onError(err) {
+      console.log("Error while logging you in:", err);
+      error(`Error: ${err.response.data.message}`);
+    },
+  });
+
   return (
-    <div>
-      <div className="w-[1440px] h-[1024px] relative bg-white">
-  <div className="left-[70px] top-[56px] absolute text-fuchsia-500 text-[26px] font-medium font-['Aeonik']">VoiceTask</div>
-  <div className="left-[70px] top-[307px] absolute flex-col justify-start items-start gap-8 inline-flex">
-    <div className="py-2.5 justify-center items-center gap-2.5 inline-flex">
-      <div className="text-teal-950 text-opacity-90 text-[25px] font-normal font-['Aeonik']">Login to your account</div>
-    </div>
-    <div className="p-6 bg-fuchsia-300 bg-opacity-20 rounded-lg flex-col justify-start items-start gap-6 flex">
-      <div className="flex-col justify-start items-start gap-2 flex">
-        <div className="text-black text-opacity-80 text-sm font-normal font-['Aeonik']">Email</div>
-        <div className="w-[594px] h-11 px-[23px] py-4 bg-white rounded border border-neutral-600 border-opacity-20 justify-start items-center gap-2.5 inline-flex">
-          <div className="text-neutral-600 text-opacity-70 text-sm font-normal font-['Aeonik']">*******@gmail.com</div>
-        </div>
-      </div>
-      <div className="flex-col justify-start items-start gap-6 flex">
-        <div className="flex-col justify-start items-start gap-2 flex">
-          <div className="text-black text-opacity-80 text-sm font-normal font-['Aeonik']">Password</div>
-          <div className="w-[594px] h-11 px-6 py-4 bg-white rounded border border-neutral-600 border-opacity-20 justify-start items-center gap-2.5 inline-flex">
-            <div className="text-neutral-600 text-opacity-70 text-sm font-normal font-['Aeonik']">Your Password</div>
+    <div className="relative h-full md:h-screen">
+      <ToastContainer />
+      <div className="w-[90%] max-w-[1200px] mx-auto h-full">
+        <h1 className="text-[26px] text-primary font-medium pt-4 md:py-5">
+          <Link to="/">
+            Voice Task
+          </Link>
+        </h1>
+        <div className="flex flex-col md:flex-row justify-around items-center h-[calc(100%_-_170px)]">
+          <div className="order-1 md:order-0 py-4 md:my-0 w-full md:w-1/2 overflow-y-auto h-full">
+            <h2 className="text-teal-950 text-[25px] mb-8 md:my-4 text-center md:text-left">Login to your account</h2>
+            <form onSubmit={
+              (e) => {
+                e.preventDefault();
+                console.log(fields)
+                mutate(fields)
+              }
+            }
+              className="flex flex-col md:ml-0 gap-6 p-6 rounded-lg bg-[#e8b8ff26] w-full max-w-[90%] mx-auto"
+            >
+              <div className="flex flex-col">
+                <label htmlFor="email" className="mb-2 text-sm text-black/80">Email</label>
+                <input type="email" id="email"
+                  placeholder="Enter your email address here"
+                  name="email"
+                  value={fields.email}
+                  onChange={handleChange}
+                  className="border border-[#4a4a4733] rounded px-4 py-2 text-sm outline-none focus:border-primary"
+                />
+              </div>
+              <div className="flex flex-col">
+                <label htmlFor="password" className="mb-2 text-sm text-black/80">Password</label>
+                <input type="password" id="password"
+                  placeholder="Create your new password"
+                  name="password"
+                  value={fields.password}
+                  onChange={handleChange}
+                  className="border border-[#4a4a4733] rounded px-4 py-2 text-sm outline-none focus:border-primary"
+                />
+              </div>
+              <Link to="/" className="text-sm text-primary">
+                Forgot password?
+              </Link>
+              <button
+                type='submit'
+                disabled={isPending}
+              className="bg-primary hover:bg-transparent disabled:scale-100 disabled:hover:bg-primary border border-primary text-white hover:text-primary active:scale-90 transition duration-200 font-medium p-2 rounded">
+              {isPending ? <Loader /> : "Signin"}
+              </button>
+              <div className="text-sm text-black/70 text-center">
+                Don&lsquo;t have an account?{" "}
+                <Link to="/register" className="hover:underline text-primary/90 font-medium">
+                  Signup
+                </Link>
+              </div>
+            </form>
+          </div>
+          <div className="flex order-0 md:order-1">
+            <div>
+              <img src={signInImage} alt="#" className="max-h-[470px] mt-10" />
+            </div>
           </div>
         </div>
-        <div className="text-fuchsia-500 text-opacity-90 text-sm font-medium font-['Aeonik']">Forgot Password</div>
+        <img src={bottomWave} className="w-full absolute left-0 bottom-0 -z-10" />
       </div>
-      <div className="w-[594px] h-[52px] px-[286px] py-4 bg-fuchsia-500 bg-opacity-90 rounded justify-center items-center gap-2.5 inline-flex">
-        <div className="text-white text-base font-medium font-['Aeonik']">Login</div>
-      </div>
-    </div>
-  </div>
-  <div className="w-[550px] h-[532.46px] left-[819px] top-[246px] absolute">
-    <div className="w-[549.97px] h-[528.94px] left-0 top-[2.20px] absolute">
-    </div>
-    <div className="w-[64.30px] h-[122.46px] left-[485.70px] top-[408.68px] absolute">
-    </div>
-    <div className="w-[179.32px] h-[297.40px] left-[79.71px] top-[233.75px] absolute">
-    </div>
-    <div className="w-[378.35px] h-[232.88px] left-0 top-[298.26px] absolute">
-    </div>
-    <div className="w-[87.86px] h-[53.34px] left-[5.34px] top-[244.15px] absolute">
-    </div>
-    <div className="w-[291.03px] h-[403.66px] left-[250.62px] top-[0.19px] absolute">
-    </div>
-    <div className="w-[231.56px] h-[479.70px] left-[91.10px] top-[52.76px] absolute">
-      <div className="opacity-10 w-[159.65px] h-[74.14px] left-[38.41px] top-[115.66px] absolute">
-      </div>
-    </div>
-  </div>
-</div>
     </div>
   )
 }
