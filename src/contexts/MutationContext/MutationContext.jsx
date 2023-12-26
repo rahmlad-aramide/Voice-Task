@@ -16,20 +16,6 @@ const MutationProvider = ({ children }) => {
       select: ({ data }) => data?.tasks,
     });
 
-    // Change Task Status
-    const { mutate: changeTaskStatus, isPending: isChangingTaskStatus } =
-      useMutation({
-        mutationFn: builder.use().task.change_task_status,
-        onSuccess(data) {
-          console.log(data);
-          queryClient.invalidateQueries(builder.task.get_tasks.get());
-        },
-        onError(err) {
-          console.log("Error while changing task status:", err);
-          // toast.error("invalid input");
-        },
-      });
-
     // Change Priority
     const { mutate: changePriority, isPending: isChangingPriority } = useMutation(
       {
@@ -76,7 +62,6 @@ const MutationProvider = ({ children }) => {
     <MutationContext.Provider
       value={{
         fetchedData, isFetchingData,
-        changeTaskStatus, isChangingTaskStatus,
         changePriority, isChangingPriority,
         changeTitle, isChangingTitle,
         deleteTask, isDeletingTask

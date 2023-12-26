@@ -5,7 +5,7 @@ import { Loader } from "../../utils";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { builder } from "../../api/builder";
 import { AddSubtaskModal, DeleteModal, EditTaskModal, ModifyModal, MorePopover } from "..";
-import { StarIcon, TrashCan } from "../../assets/svg";
+import { CheckMarkIcon, StarIcon, TrashCan } from "../../assets/svg";
 import ModifySubtaskModal from "../Modals/ModifySubtaskModal";
 import { useModal } from "../../contexts/ModalContext/ModalContext";
 import { calculateProgressPercentage } from "../../utils/helper";
@@ -110,6 +110,13 @@ const TaskCard = ({ task }) => {
               onClick={handleStar}
             >
               <StarIcon isStarred={isStarred} />
+            </button>
+            <button
+              className="mr-2"
+              disabled={task?.completed}
+              // onClick={handleStar}
+            >
+              <CheckMarkIcon />
             </button>
             <button className="mr-2" onClick={()=>setOpenDeleteModal(!openDeleteModal)}>
               <TrashCan />

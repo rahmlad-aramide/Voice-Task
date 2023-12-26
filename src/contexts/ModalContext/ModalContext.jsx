@@ -9,6 +9,7 @@ const ModalProvider = ({ children }) => {
   const [openSubtaskModal, setOpenSubtaskModal] = useState(false);
   const [openAddSubtaskModal, setOpenAddSubtaskModal] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [openCompleteModal, setOpenCompleteModal] = useState(false);
 
   return (
     <ModalContext.Provider
@@ -21,6 +22,8 @@ const ModalProvider = ({ children }) => {
         setOpenEditModal,
         openSubtaskModal,
         setOpenSubtaskModal,
+        openCompleteModal,
+        setOpenCompleteModal,
         openDeleteModal,
         setOpenDeleteModal,
         openAddSubtaskModal,
