@@ -6,7 +6,7 @@ import { Loader } from "../../utils";
 // eslint-disable-next-line react/prop-types
 const DeleteModal = ({taskId}) => {
   const {openDeleteModal, setOpenDeleteModal} = useModal();
-  const {deleteTask, isDeletingTask} = useMutationContext()
+  const {deleteTask, isDeletingTask} = useMutationContext();
 
   if (!openDeleteModal) return null;
 

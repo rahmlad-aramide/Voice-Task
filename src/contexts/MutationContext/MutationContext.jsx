@@ -1,11 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createContext, useContext } from "react";
 import { builder } from "../../api/builder";
+import { useModal } from "../ModalContext/ModalContext";
 
 export const MutationContext = createContext();
 
 const MutationProvider = ({ children }) => {
     const queryClient = useQueryClient();
+    const {openDeleteModal, setOpenDeleteModal} = useModal();
 
     // Fetch data from the backend   
     const { data: fetchedData, isPending: isFetchingData } = useQuery({
@@ -59,9 +61,9 @@ const MutationProvider = ({ children }) => {
     // Delete Task
     const { mutate: deleteTask, isPending: isDeletingTask } = useMutation({
       mutationFn: builder.use().task.delete_task,
-      onSuccess(data) {
-        console.log(data);
-        queryClient.invalidateQueries(builder.task.get_tasks.get());
+      onSuccess() {
+          queryClient.invalidateQueries(builder.task.get_tasks.get());
+          setOpenDeleteModal(!openDeleteModal)
       },
       onError(err) {
         console.log("Error while deleting task:", err);
