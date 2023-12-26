@@ -5,7 +5,7 @@ const Navbar = () => {
   
   return (
     <div className="flex flex-col">
-      <div>
+      <div className='pb-5'>
         <div className="flex justify-between w-[90%] max-w-[1024px] mx-auto pt-5 pb-2">
           <Link to="/">
             <div className="text-primary text-[26px] font-medium font-Aeonik">Voice Task</div>

@@ -10,7 +10,6 @@ import {
   warn,
 } from "../../utils/toast";
 import { Loader } from "../../utils";
-import { ToastContainer } from "react-toastify";
 
 const defaultFields = {
   name: "",
@@ -59,7 +58,6 @@ const SignUp = () => {
 
   return (
     <div className="relative h-full md:h-screen">
-      <ToastContainer />
       <div className="w-[90%] max-w-[1200px] mx-auto h-full">
         <h1 className="text-[26px] text-primary font-medium pt-4 md:py-5">
           <Link to="/">Voice Task</Link>

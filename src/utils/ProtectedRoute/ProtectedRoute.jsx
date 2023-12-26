@@ -1,27 +1,19 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Navigate, Outlet } from 'react-router-dom';
-import { useEffect, useState } from 'react';
 import { cookieStorage } from '@ibnlanre/portal';
-import { useToken } from '../../contexts/AuthContext/AuthContext';
-import CircleLoader from '../CircleLoader/CircleLoader';
+import Loader from '../Loader/Loader';
+import { useMutationContext } from '../../contexts/MutationContext/MutationContext';
 
 const ProtectedRoute = () => {
-  const { token, setToken } = useToken();
-  const [isLoading, setIsLoading] = useState(true);
+  const {isFetcingData} = useMutationContext()
 
-  useEffect(()=> {
-    const token = cookieStorage.getItem('token')
-    if(token){
-      setToken(token);
-    }
-    setIsLoading(false);
-  }, []);
-
-  if(isLoading){
+  const token = cookieStorage.getItem('token')
+ 
+  if(isFetcingData){
     return (
-      <div className="bg-gray-200 h-full md:h-[calc(100vh_-_60px)] overflow-y-auto">
-        <div className="flex mt-8 h-[50vh] bg-white m-10 rounded-lg justify-center items-center">
-          <CircleLoader />
+      <div className="bg-gray-200 h-screen overflow-y-auto">
+        <div className="flex h-[calc(100%_-_80px)] bg-white m-4 md:m-10 rounded-lg justify-center items-center">
+          <Loader color={'#C13DFF'} />
         </div>
       </div>
     )

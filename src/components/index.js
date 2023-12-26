@@ -1,7 +1,11 @@
-export {default as Navbar} from './Navbar/Navbar'
-export {default as AddBar} from './AddBar/AddBar'
-export {default as TaskCard} from './TaskCard/TaskCard'
-export {default as RecorderModal} from './AddBar/RecorderModal'
-export {default as VoiceRecorder} from './VoiceRecorder/VoiceRecorder'
-
-
+export { default as Navbar } from "./Navbar/Navbar";
+export { default as DisplayErrorMessage } from "./DisplayErrorMessage/DIsplayErrorMessage";
+export { default as TaskCard } from "./TaskCard/TaskCard";
+export { default as RecorderModal } from "./Modals/RecorderModal";
+export { default as CreateModal } from "./CreateModal/CreateModal";
+export { default as DeleteModal } from "./Modals/DeleteModal";
+export { default as VoiceRecorder } from "./VoiceRecorder/VoiceRecorder";
+export { default as MorePopover } from "./MorePopover/MorePopover";
+export { default as ModifyModal } from "./Modals/ModifyModal";
+export { default as EditTaskModal } from "./Modals/EditTaskModal";
+export { default as AddSubtaskModal } from "./Modals/AddSubtaskModal";

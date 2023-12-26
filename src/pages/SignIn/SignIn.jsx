@@ -7,7 +7,6 @@ import { useMutation } from '@tanstack/react-query';
 import { error, notify } from '../../utils/toast';
 import { Loader } from '../../utils';
 import { cookieStorage } from '@ibnlanre/portal';
-import { ToastContainer } from 'react-toastify';
 
 const defaultFields = {
   email: '',
@@ -26,11 +25,11 @@ const SignIn = () => {
   }
   // Login mutation function
   const { mutate, isPending } = useMutation({
-    // mutationKey: builder.auth.signup.get(),
+    mutationKey: builder.auth.signup.get(),
     mutationFn: builder.use().auth.signin,
     onSuccess(response) {
-      cookieStorage.setItem('token', response.data.token)
       console.log(response);
+      cookieStorage.setItem('token', response?.data?.token)
       notify("Successful! You're being redirected");
       setFields(defaultFields);
       setTimeout(() => {
@@ -39,13 +38,13 @@ const SignIn = () => {
     },
     onError(err) {
       console.log("Error while logging you in:", err);
-      error(`Error: ${err.response.data.message}`);
+      error("Error:", err?.message);
+      // error(`Error: ${err?.response?.data.message}`);
     },
   });
 
   return (
     <div className="relative h-full md:h-screen">
-      <ToastContainer />
       <div className="w-[90%] max-w-[1200px] mx-auto h-full">
         <h1 className="text-[26px] text-primary font-medium pt-4 md:py-5">
           <Link to="/">
@@ -58,7 +57,6 @@ const SignIn = () => {
             <form onSubmit={
               (e) => {
                 e.preventDefault();
-                console.log(fields)
                 mutate(fields)
               }
             }
