@@ -9,26 +9,27 @@ import { CheckMarkIcon, StarIcon, TrashCan } from "../../assets/svg";
 import ModifySubtaskModal from "../Modals/ModifySubtaskModal";
 import { useModal } from "../../contexts/ModalContext/ModalContext";
 import { calculateProgressPercentage } from "../../utils/helper";
+import CompleteModal from "../Modals/CompleteModal";
 
 // eslint-disable-next-line react/prop-types
 const TaskCard = ({ task }) => {
   const [openMore, setOpenMore] = useState(false);
   const [isStarred, setIsStarred] = useState(false);
-  // const [progress, setProgress] = useState("40%");
-  const {openDeleteModal, setOpenDeleteModal} = useModal();
+  const {openDeleteModal, setOpenDeleteModal, openCompleteModal, setOpenCompleteModal} = useModal();
 
-  const queryClient = useQueryClient();
-  const { mutate: addSubtask, isPending: isAddingSubtask } = useMutation({
-    mutationFn: builder.use().task.add_subtask,
-    onSettled: (data) => console.log(data),
-    onSuccess() {
-      queryClient.invalidateQueries(builder.task.get_tasks.get());
-    },
-    onError(err) {
-      console.log("Error while adding subtask:", err);
-      // toast.error("invalid input");
-    },
-  });
+  // const queryClient = useQueryClient();
+  // const { mutate: addSubtask, isPending: isAddingSubtask } = useMutation({
+  //   mutationFn: builder.use().task.add_subtask,
+  //   onSettled: (data) => console.log(data),
+  //   onSuccess() {
+  //     queryClient.invalidateQueries(builder.task.get_tasks.get());
+  //   },
+  //   onError(err) {
+  //     console.log("Error while adding subtask:", err);
+  //     // toast.error("invalid input");
+  //   },
+  // });
+
   const progress = calculateProgressPercentage(task.subTasks)
 
   const handleStar = () => {
@@ -85,7 +86,7 @@ const TaskCard = ({ task }) => {
               ? task.subTasks.map((subtask) => (
                   <SubTaskList key={subtask._id} subtask={subtask} />
                 ))
-              : "No subtask added to this task"}
+              : "No subtask added to this task yet"}
           </ul>
         )}
         <div className="h-[160px] w-full bg-gray-100 rounded-xl"></div>
@@ -114,7 +115,7 @@ const TaskCard = ({ task }) => {
             <button
               className="mr-2"
               disabled={task?.completed}
-              // onClick={handleStar}
+              onClick={()=>setOpenCompleteModal(!openCompleteModal)}
             >
               <CheckMarkIcon />
             </button>
@@ -135,6 +136,7 @@ const TaskCard = ({ task }) => {
       <DeleteModal taskId={task._id} />
       <EditTaskModal taskId={task._id} taskTitle={task.title} />
       <AddSubtaskModal taskId={task._id} />
+      <CompleteModal taskId={task._id} taskTitle={task.title} />
     </>
   );
 };

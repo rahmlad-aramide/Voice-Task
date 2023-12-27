@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createContext, useContext } from "react";
 import { builder } from "../../api/builder";
 import { useModal } from "../ModalContext/ModalContext";
+import { notify, warn } from "../../utils/toast";
 
 export const MutationContext = createContext();
 
@@ -50,10 +51,11 @@ const MutationProvider = ({ children }) => {
       onSuccess() {
           queryClient.invalidateQueries(builder.task.get_tasks.get());
           setOpenDeleteModal(!openDeleteModal)
+          notify("Task deleted successfully")
       },
       onError(err) {
         console.log("Error while deleting task:", err);
-        // toast.error("invalid input");
+        warn(`An error has occured ${err}`)
       },
     });
 

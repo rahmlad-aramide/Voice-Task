@@ -6,6 +6,7 @@ import VimeoPlayer from "../../components/VimeoPlayer/VimeoPlayer";
 
 const Home = () => {
   const navigate = useNavigate();
+  const token = cookieStorage.getItem("token");
   return (
     <div className="flex h-screen items-center justify-center">
       <ToastContainer />
@@ -19,20 +20,36 @@ const Home = () => {
         </p>
         <VimeoPlayer />
         <div className="flex justify-center mt-8 gap-4">
+        {token && (
           <Link to="/dashboard">
             <button className="bg-[#e8b8ff] rounded py-1 px-2 transition duration-200 hover:scale-90 active:scale-100">
               Go to Dashboard
             </button>
           </Link>
-          <button onClick={()=>{
-            cookieStorage.removeItem('token');
-            notify("Logging out, we hope to see you soon!")
-            setTimeout(()=>{
-              navigate('/login')
-            }, 2000)
-          }} className="bg-[#e8b8ff] rounded py-1 px-2 transition duration-200 hover:scale-90 active:scale-100">
-            Logout
-          </button>
+          )}
+          {token ? (
+            <button
+              onClick={() => {
+                cookieStorage.removeItem("token");
+                notify("Logging out, we hope to see you soon!");
+                setTimeout(() => {
+                  navigate("/login");
+                }, 2000);
+              }}
+              className="bg-[#e8b8ff] rounded py-1 px-2 transition duration-200 hover:scale-90 active:scale-100"
+            >
+              Logout
+            </button>
+          ) : (
+            <button
+              onClick={() => {
+                navigate("/login");
+              }}
+              className="bg-[#e8b8ff] rounded py-1 px-2 transition duration-200 hover:scale-90 active:scale-100"
+            >
+              Login
+            </button>
+          )}
         </div>
       </div>
     </div>

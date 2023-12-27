@@ -42,7 +42,7 @@ export function addWhitespaceAfterComma(inputString) {
 
 export function calculateProgressPercentage(subTasks) {
   if (!subTasks || subTasks.length === 0) {
-      return `${1}%`;
+      return `${0}%`;
   }
 
   const totalSubTasks = subTasks.length;

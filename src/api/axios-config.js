@@ -2,11 +2,8 @@ import { cookieStorage } from '@ibnlanre/portal';
 import axios from 'axios'
 
 export const token = cookieStorage.getItem('token')
-// export const baseURL= import.meta.env.VITE_APP_PUBLIC_BASEURL
-// export const apikey = import.meta.env.VITE_APP_PUBLIC_APIKEY
-
-const baseURL='https://voice-task-dev.onrender.com'
-const apikey='6508b27e2b66a05e77f8e04c'
+export const baseURL= import.meta.env.VITE_APP_PUBLIC_BASEURL
+export const apikey = import.meta.env.VITE_APP_PUBLIC_APIKEY
 
 // creating an instance
 export const AUTHAPI = axios.create({
@@ -24,10 +21,17 @@ export const USETOKEN = axios.create({
   }
 });
 
-// USETOKEN.interceptors.request.use(
-//   (req)=>{
-//     let token = cookieStorage.getItem("token");
-//     if(token){
-//       req.headers.Authorization =  `Bearer ${token}`;
-//     }
-//   })
+
+USETOKEN.interceptors.request.use(
+  (req) => {
+    let token = cookieStorage.getItem("token");
+    if (token) {
+      req.headers.Authorization = `Bearer ${token}`;
+    }
+    return req;
+  },
+  (error) => {
+    // Handle request error (if any)
+    return Promise.reject(error);
+  }
+);

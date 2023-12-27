@@ -4,6 +4,7 @@ import { Loader } from '../../utils';
 import { useModal } from '../../contexts/ModalContext/ModalContext';
 import { builder } from '../../api/builder';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { notify, warn } from '../../utils/toast';
 
 const AddSubtaskModal = ({taskId}) => {
   const queryClient = useQueryClient();
@@ -18,12 +19,12 @@ const AddSubtaskModal = ({taskId}) => {
     onSuccess(data) {
       console.log(data)
       queryClient.invalidateQueries(builder.task.get_tasks.get())
-      // toast.success("login successful");
-      // cookieStorage.setItem("my-user", JSON.stringify(data.data));
+      notify("Added subtask successfully");
+      setOpenAddSubtaskModal(!openAddSubtaskModal)
     },
     onError(err) {
       console.log("Error while adding task:",err);
-      // toast.error("invalid input");
+      warn(`An error has occured ${err}`)
     },
   });
 

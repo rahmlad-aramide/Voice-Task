@@ -4,7 +4,7 @@ import { Cloud, Document, Microphone, MultiLine } from "../../assets/svg";
 import { useDropzone } from "react-dropzone";
 import { formatFileSize } from "../../utils/helper";
 import DisplayErrorMessage from "../DisplayErrorMessage/DIsplayErrorMessage";
-import { notify } from "../../utils/toast";
+import { notify, warn } from "../../utils/toast";
 import { builder } from "../../api/builder";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
@@ -15,7 +15,7 @@ const defaultFormFields = {
 };
 
 const CreateModal = ({ openModal, setOpenModal }) => {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
   const [formFields, setFormFields] = useState(defaultFormFields);
   const { title, description, priority } = formFields;
 
@@ -66,21 +66,19 @@ const CreateModal = ({ openModal, setOpenModal }) => {
     ({ errors }) => `${errors[0].message}`
   );
 
- // use case of useMutation
+ // use 
  const { mutate: createTask, isPending: isCreatingTask } = useMutation({
   mutationFn: builder.use().task.create_task,
   onSuccess(data) {
     console.log(data)
-    console.log("Success")
     queryClient.invalidateQueries(builder.task.get_tasks.get())
-    // toast.success("login successful");
-    // cookieStorage.setItem("my-user", JSON.stringify(data.data));
+    setOpenModal(!openModal)
     notify("Task created successfully.")
     resetFormFields();
   },
   onError(err) {
     console.log("Error while adding task:",err);
-    // toast.error("invalid input");
+    warn(`An error has occured ${err}`)
   },
 });
 
