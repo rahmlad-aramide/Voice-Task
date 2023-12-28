@@ -12,7 +12,7 @@ const Dashboard = () => {
   const { searchValue } = useSearch();
   const { fetchedData } = useMutationContext();
 
-  const filteredData = fetchedData?.filter((d) =>
+  const filteredData = fetchedData?.slice().reverse().filter((d) =>
     d.title.toLowerCase().includes(searchValue.toLowerCase())
   );
   // const filteredData = data?.tasks.filter((d) =>
@@ -156,7 +156,7 @@ const Dashboard = () => {
         <div className="flex w-fit">
           <button
             onClick={() => setOpenModal(!openModal)}
-            className="bg-primary/90 hover:bg-purple-600 disabled:bg-primary/80 disabled:cursor-not-allowed transition duration-200 h-10 rounded-lg text-white font-medium gap-2 p-4 flex shrink-0 items-center justify-center"
+            className="bg-primary/90 hover:bg-purple-600 disabled:bg-grey-300 disabled:cursor-not-allowed transition duration-200 h-10 rounded-lg text-white font-medium gap-2 p-4 flex shrink-0 items-center justify-center"
           >
             <Plus />
             Create New Task

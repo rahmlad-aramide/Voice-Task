@@ -5,7 +5,7 @@ export const ModalContext = createContext();
 const ModalProvider = ({ children }) => {
   const [openModal, setOpenModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
-  const [currentTask, setCurrentTask] = useState(null);
+  const [currentTask, setCurrentTask] = useState({});
   const [openSubtaskModal, setOpenSubtaskModal] = useState(false);
   const [openAddSubtaskModal, setOpenAddSubtaskModal] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);

@@ -4,14 +4,14 @@ import { Cloud, Document, Microphone, MultiLine } from "../../assets/svg";
 import { useDropzone } from "react-dropzone";
 import { formatFileSize } from "../../utils/helper";
 import DisplayErrorMessage from "../DisplayErrorMessage/DIsplayErrorMessage";
-import { notify, warn } from "../../utils/toast";
+import { notify, error } from "../../utils/toast";
 import { builder } from "../../api/builder";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const defaultFormFields = {
-  title: '',
-  description: '',
-  priority: 'low'
+  title: "",
+  description: "",
+  priority: "low",
 };
 
 const CreateModal = ({ openModal, setOpenModal }) => {
@@ -21,12 +21,12 @@ const CreateModal = ({ openModal, setOpenModal }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormFields({ ...formFields, [name]: value })
-  }
+    setFormFields({ ...formFields, [name]: value });
+  };
 
   const resetFormFields = () => {
-    setFormFields(defaultFormFields)
-  }
+    setFormFields(defaultFormFields);
+  };
   const [multilineText, setMultilineText] = useState(false);
   const [entering, setEntering] = useState(false);
   const [activeField, setActiveField] = useState(0);
@@ -66,21 +66,21 @@ const CreateModal = ({ openModal, setOpenModal }) => {
     ({ errors }) => `${errors[0].message}`
   );
 
- // use 
- const { mutate: createTask, isPending: isCreatingTask } = useMutation({
-  mutationFn: builder.use().task.create_task,
-  onSuccess(data) {
-    console.log(data)
-    queryClient.invalidateQueries(builder.task.get_tasks.get())
-    setOpenModal(!openModal)
-    notify("Task created successfully.")
-    resetFormFields();
-  },
-  onError(err) {
-    console.log("Error while adding task:",err);
-    warn(`An error has occured ${err}`)
-  },
-});
+  // mutation function to create task
+  const { mutate: createTask, isPending: isCreatingTask } = useMutation({
+    mutationFn: builder.use().task.create_task,
+    onSuccess(data) {
+      console.log(data);
+      queryClient.invalidateQueries(builder.task.get_tasks.get());
+      setOpenModal(!openModal);
+      notify("Task created successfully.");
+      resetFormFields();
+    },
+    onError(err) {
+      console.log("Error while adding task:", err);
+      error(`An error has occured ${err?.response?.data.message}`);
+    },
+  });
 
   if (!openModal) return;
   return (
@@ -110,12 +110,7 @@ const CreateModal = ({ openModal, setOpenModal }) => {
             className="space-y-5 w-[100%]"
             onSubmit={(e) => {
               e.preventDefault();
-              console.log(formFields);
               createTask(formFields);
-              // notify("Created");
-              setTimeout(() => {
-                setOpenModal(!openModal);
-              }, 1000);
             }}
           >
             <div className="flex flex-col gap-y-5">
@@ -249,7 +244,7 @@ const CreateModal = ({ openModal, setOpenModal }) => {
                     </div>
                     <button
                       type="button"
-                      className="flex items-center bg-primary hover:bg-purple-600 disabled:bg-primary/80 disabled:cursor-not-allowed transition duration-200 h-9 py-2 px-6 text-[#fff] text-sm font-medium rounded-lg"
+                      className="flex items-center bg-primary hover:bg-purple-600 disabled:bg-grey-300 disabled:cursor-not-allowed transition duration-200 h-9 py-2 px-6 text-[#fff] text-sm font-medium rounded-lg"
                     >
                       {uploadedFile ? "Upload Another File" : " Browse Files"}
                     </button>
@@ -287,7 +282,7 @@ const CreateModal = ({ openModal, setOpenModal }) => {
               <button
                 type="submit"
                 disabled={isCreatingTask}
-                className="flex items-center bg-primary hover:bg-purple-600 disabled:bg-primary/80 disabled:cursor-not-allowed transition duration-200 h-9 py-2 px-6 text-[#fff] text-sm font-medium rounded-lg"
+                className="flex items-center bg-primary hover:bg-purple-600 disabled:bg-grey-300 disabled:cursor-not-allowed transition duration-200 h-9 py-2 px-6 text-[#fff] text-sm font-medium rounded-lg"
               >
                 {isCreatingTask ? <Loader /> : "Create Task"}
               </button>

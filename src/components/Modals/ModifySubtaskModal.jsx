@@ -2,10 +2,13 @@ import { useEffect, useState } from "react";
 import { CloseIcon } from "../../assets/svg";
 import { Loader } from "../../utils";
 import { useModal } from "../../contexts/ModalContext/ModalContext";
+import { builder } from "../../api/builder";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { error, notify } from "../../utils/toast";
 
 const ModifySubtaskModal = () => {
-  const [isLoading] = useState(false);
-  const [selectedId, setSelectedId] = useState(null);
+  const queryClient = useQueryClient();
+  const [selectedId, setSelectedId] = useState("");
   const [activeField, setActiveField] = useState(0);
   const onFocus = (num) => setActiveField(num);
   const onBlur = () => setActiveField(0);
@@ -16,9 +19,39 @@ const ModifySubtaskModal = () => {
   const [renameSubtask, setRenameSubtask] = useState("");
 
   useEffect(() => {
-    Boolean(currentSubTask) && setRenameSubtask(currentSubTask[0].todo);
+    Boolean(currentSubTask) && selectedId !== ""
+      ? setRenameSubtask(currentSubTask[0].todo)
+      : setRenameSubtask("");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedId]);
+
+  const { mutate, isPending: isRenamingSubtask } = useMutation({
+    mutationFn: builder.use().task.change_subtask_todo,
+    onSuccess(data) {
+      console.log(data);
+      queryClient.invalidateQueries(builder.task.get_tasks.get());
+      setOpenSubtaskModal(!openSubtaskModal);
+      notify("Subtask updated successfully.");
+    },
+    onError(err) {
+      console.log("Error while adding task:", err);
+      error(`An error has occured ${err?.response?.data.message}`);
+    },
+  });
+
+  const { mutate: deleteSubtask, isPending: isDeletingSubtask } = useMutation({
+    mutationFn: builder.use().task.delete_subtask,
+    onSuccess(data) {
+      console.log(data);
+      queryClient.invalidateQueries(builder.task.get_tasks.get());
+      setOpenSubtaskModal(!openSubtaskModal);
+      notify("Subtask deleted successfully.");
+    },
+    onError(err) {
+      console.log("Error while adding task:", err);
+      error(`An error has occured ${err?.response?.data.message}`);
+    },
+  });
 
   if (!openSubtaskModal) return null;
 
@@ -55,7 +88,16 @@ const ModifySubtaskModal = () => {
               </select>
             </div>
             <div className="w-full h-[1px] bg-grey-300"></div>
-            <form>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                mutate({
+                  taskId: currentTask._id,
+                  subtaskId: selectedId,
+                  data: renameSubtask,
+                });
+              }}
+            >
               <div className="flex flex-col">
                 <label htmlFor="title" className="flex flex-col w-full">
                   <span className="mb-1">Edit subtask</span>
@@ -81,15 +123,23 @@ const ModifySubtaskModal = () => {
               <div className="flex justify-end items-center mt-2">
                 <button
                   type="submit"
-                  disabled={isLoading}
-                  className="flex items-center bg-primary hover:bg-purple-600 disabled:bg-primary/80 disabled:cursor-not-allowed transition duration-200 h-9 py-2 px-6 text-[#fff] text-sm font-medium rounded-lg"
+                  disabled={isRenamingSubtask || selectedId === ""}
+                  className="flex items-center bg-primary hover:bg-purple-600 disabled:bg-grey-300 disabled:cursor-not-allowed transition duration-200 h-9 py-2 px-6 text-[#fff] text-sm font-medium rounded-lg"
                 >
-                  {isLoading ? <Loader /> : "Save"}
+                  {isRenamingSubtask ? <Loader /> : "Save"}
                 </button>
               </div>
             </form>
             <div className="w-full h-[1px] bg-grey-300"></div>
-            <form>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                deleteSubtask({
+                  taskId: currentTask._id,
+                  subtaskId: currentSubTask._id,
+                });
+              }}
+            >
               <div className="flex flex-col">
                 <label htmlFor="title" className="flex flex-col w-full">
                   <span className="mb-1">Delete subtask</span>
@@ -111,10 +161,10 @@ const ModifySubtaskModal = () => {
               <div className="flex justify-end items-center mt-2">
                 <button
                   type="submit"
-                  disabled={isLoading}
-                  className="flex items-center bg-primary hover:bg-purple-600 disabled:bg-primary/80 disabled:cursor-not-allowed transition duration-200 h-9 py-2 px-6 text-[#fff] text-sm font-medium rounded-lg"
+                  disabled={isDeletingSubtask || selectedId === ""}
+                  className="flex items-center bg-primary hover:bg-purple-600 disabled:bg-grey-300 disabled:cursor-not-allowed transition duration-200 h-9 py-2 px-6 text-[#fff] text-sm font-medium rounded-lg"
                 >
-                  {isLoading ? <Loader /> : "Delete"}
+                  {isDeletingSubtask ? <Loader /> : "Delete"}
                 </button>
               </div>
             </form>

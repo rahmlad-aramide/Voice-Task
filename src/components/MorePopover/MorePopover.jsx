@@ -1,8 +1,6 @@
-import { useEffect } from "react";
 import { Popover, ArrowContainer } from "react-tiny-popover";
 import {
   AddCollaboratorIcon,
-  AddImageIcon,
   ChangePriorityIcon,
   MoreIcon,
   PencilIcon,
@@ -20,11 +18,6 @@ const MorePopover = ({ completed, openMore, setOpenMore, task }) => {
     openAddSubtaskModal,
     setOpenAddSubtaskModal,
   } = useModal();
-
-  useEffect(() => {
-    setCurrentTask(task);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   return (
     <Popover
@@ -44,56 +37,56 @@ const MorePopover = ({ completed, openMore, setOpenMore, task }) => {
           arrowClassName="popover-arrow"
         >
           <div className="w-full max-w-[178px] rounded-[5px] shadow-xl bg-white p-3">
-          <button
-            onClick={() => {
-              setOpenAddSubtaskModal(!openAddSubtaskModal);
-            }}
-            className="group transition duration-200 flex items-center w-full p-2 hover:bg-[#D7FFFD] mb-1"
-          >
-            <PlusIconSmall />
-            <div className="text-xs group-hover:text-[#22C6BC] text-secondary/80">
-              Add Subtask
-            </div>
-          </button>
-          <button
-            onClick={() => {
-              setOpenEditModal(!openEditModal);
-            }}
-            className="group transition duration-200 flex items-center w-full p-2 hover:bg-[#D7FFFD] mb-1"
-          >
-            <PencilIcon />
-            <div className="text-xs group-hover:text-[#22C6BC] text-secondary/80">
-              Edit Task Title
-            </div>
-          </button>
-          <button
-            onClick={() => {
-              setOpenSubtaskModal(!openSubtaskModal);
-            }}
-            className="group transition duration-200 flex items-center w-full p-2 hover:bg-[#D7FFFD] mb-1"
-          >
-            <ChangePriorityIcon />
-            <div className="text-xs group-hover:text-[#22C6BC] text-secondary/80">
-              Modify Substasks
-            </div>
-          </button>
-          <button className="group transition duration-200 flex items-center w-full p-2 hover:bg-[#D7FFFD] mb-1">
-            <AddImageIcon />
-            <div className="text-xs group-hover:text-[#22C6BC] text-secondary/80">
-              Add Image
-            </div>
-          </button>
-          <button className="group transition duration-200 flex items-center w-full p-2 hover:bg-[#D7FFFD] mb-1">
-            <AddCollaboratorIcon />
-            <div className="text-xs group-hover:text-[#22C6BC] text-secondary/80">
-              Add Collaborator
-            </div>
-          </button>
-        </div>
+            <button
+              onClick={() => {
+                setOpenEditModal(!openEditModal);
+              }}
+              className="group transition duration-200 flex items-center w-full p-2 hover:bg-[#D7FFFD] mb-1"
+            >
+              <PencilIcon />
+              <div className="text-xs group-hover:text-[#22C6BC] text-secondary/80">
+                Edit Task
+              </div>
+            </button>
+            <button
+              onClick={() => {
+                setOpenAddSubtaskModal(!openAddSubtaskModal);
+              }}
+              className="group transition duration-200 flex items-center w-full p-2 hover:bg-[#D7FFFD] mb-1"
+            >
+              <PlusIconSmall />
+              <div className="text-xs group-hover:text-[#22C6BC] text-secondary/80">
+                Add Subtask
+              </div>
+            </button>
+            <button
+              onClick={() => {
+                setOpenSubtaskModal(!openSubtaskModal);
+              }}
+              className="group transition duration-200 flex items-center w-full p-2 hover:bg-[#D7FFFD] mb-1"
+            >
+              <ChangePriorityIcon />
+              <div className="text-xs group-hover:text-[#22C6BC] text-secondary/80">
+                Modify Substasks
+              </div>
+            </button>
+            <button className="group transition duration-200 flex items-center w-full p-2 hover:bg-[#D7FFFD] mb-1">
+              <AddCollaboratorIcon />
+              <div className="text-xs group-hover:text-[#22C6BC] text-secondary/80">
+                Add Collaborator
+              </div>
+            </button>
+          </div>
         </ArrowContainer>
       )}
     >
-      <button disabled={completed} onClick={() => setOpenMore(!openMore)}>
+      <button
+        disabled={completed}
+        onClick={() => {
+          setOpenMore(!openMore);
+          setCurrentTask(task);
+        }}
+      >
         <MoreIcon />
       </button>
     </Popover>

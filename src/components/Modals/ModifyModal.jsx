@@ -1,11 +1,11 @@
-import { useState } from 'react';
-import { CloseIcon } from '../../assets/svg';
-import { Loader } from '../../utils';
-import { useModal } from '../../contexts/ModalContext/ModalContext';
+import { useState } from "react";
+import { CloseIcon } from "../../assets/svg";
+import { Loader } from "../../utils";
+import { useModal } from "../../contexts/ModalContext/ModalContext";
 
 const ModifyModal = () => {
-  const [isLoading, ] = useState(false);
-  const {openModal, setOpenModal} = useModal();
+  const [isLoading] = useState(false);
+  const { openModal, setOpenModal } = useModal();
 
   if (!openModal) return null;
 
@@ -27,15 +27,12 @@ const ModifyModal = () => {
               e.preventDefault();
             }}
           >
-            <div className="flex flex-col gap-y-5">
-              
-              
-            </div>
+            <div className="flex flex-col gap-y-5"></div>
             <div className="flex justify-end items-center">
               <button
                 type="submit"
                 disabled={isLoading}
-                className="flex items-center bg-primary hover:bg-purple-600 disabled:bg-primary/80 disabled:cursor-not-allowed transition duration-200 h-9 py-2 px-6 text-[#fff] text-sm font-medium rounded-lg"
+                className="flex items-center bg-primary hover:bg-purple-600 disabled:bg-grey-300 disabled:cursor-not-allowed transition duration-200 h-9 py-2 px-6 text-[#fff] text-sm font-medium rounded-lg"
               >
                 {isLoading ? <Loader /> : "Create Task"}
               </button>

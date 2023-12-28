@@ -14,12 +14,12 @@ export const builder = createBuilder({
     change_task_status: (taskId) =>
       USETOKEN.patch(`/api/v1/task/${taskId}/status`),
     change_task_priority: ({ taskId, data }) =>
-      USETOKEN.patch(`/api/v1/task/${taskId}/priority`, data),
+      USETOKEN.patch(`/api/v1/task/${taskId}/priority`, {priority:data}),
     change_task_title: ({ taskId, data }) =>
-      USETOKEN.patch(`/api/v1/task/${taskId}/title`, data),
+      USETOKEN.patch(`/api/v1/task/${taskId}/title`, {title:data}),
     delete_task: (taskId) => USETOKEN.delete(`/api/v1/task/${taskId}`),
     add_subtask: ({ taskId, data }) => {
-      return USETOKEN.put(`/api/v1/task/${taskId}/subtask`, data);
+      return USETOKEN.put(`/api/v1/task/${taskId}/subtask`, {todo:data});
     },
     change_subtask_status: ({ taskId, subtaskId, data }) =>
       USETOKEN.patch(
@@ -28,8 +28,8 @@ export const builder = createBuilder({
       ),
     change_subtask_todo: ({ taskId, subtaskId, data }) =>
       USETOKEN.patch(
-        `/api/v1/task/${taskId}/substack/todo?subtaskId=${subtaskId}`,
-        data
+        `/api/v1/task/${taskId}/subtask/todo?subtaskId=${subtaskId}`,
+        {todo:data}
       ),
     delete_subtask: ({ taskId, subtaskId }) =>
       USETOKEN.delete(`/api/v1/task/${taskId}/substack?subtaskId=${subtaskId}`),

@@ -1,9 +1,4 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/prop-types */
-import { useEffect, useState } from "react";
-import { Loader } from "../../utils";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { builder } from "../../api/builder";
+import { useState } from "react";
 import { AddSubtaskModal, DeleteModal, EditTaskModal, ModifyModal, MorePopover } from "..";
 import { CheckMarkIcon, StarIcon, TrashCan } from "../../assets/svg";
 import ModifySubtaskModal from "../Modals/ModifySubtaskModal";
@@ -11,24 +6,10 @@ import { useModal } from "../../contexts/ModalContext/ModalContext";
 import { calculateProgressPercentage } from "../../utils/helper";
 import CompleteModal from "../Modals/CompleteModal";
 
-// eslint-disable-next-line react/prop-types
 const TaskCard = ({ task }) => {
   const [openMore, setOpenMore] = useState(false);
   const [isStarred, setIsStarred] = useState(false);
-  const {openDeleteModal, setOpenDeleteModal, openCompleteModal, setOpenCompleteModal} = useModal();
-
-  // const queryClient = useQueryClient();
-  // const { mutate: addSubtask, isPending: isAddingSubtask } = useMutation({
-  //   mutationFn: builder.use().task.add_subtask,
-  //   onSettled: (data) => console.log(data),
-  //   onSuccess() {
-  //     queryClient.invalidateQueries(builder.task.get_tasks.get());
-  //   },
-  //   onError(err) {
-  //     console.log("Error while adding subtask:", err);
-  //     // toast.error("invalid input");
-  //   },
-  // });
+  const {setCurrentTask,openDeleteModal, setOpenDeleteModal, openCompleteModal, setOpenCompleteModal} = useModal();
 
   const progress = calculateProgressPercentage(task.subTasks)
 
@@ -93,13 +74,13 @@ const TaskCard = ({ task }) => {
         <div>
           <div className="h-[11px] w-full bg-grey-100 rounded-xl">
             <div
-              style={{width: progress}}
+              style={{width: task.completed? '100%' :progress}}
               className={`bg-primary/70 h-full rounded-xl`}
             ></div>
           </div>
           <div className="flex justify-between mt-1">
             <div className="text-grey-400 text-xs">Progress</div>
-            <div className="text-grey-600 text-sm">{progress}</div>
+            <div className="text-grey-600 text-sm">{task.completed? '100%' :progress}</div>
           </div>
         </div>
         <div className="flex justify-between">
@@ -115,11 +96,11 @@ const TaskCard = ({ task }) => {
             <button
               className="mr-2"
               disabled={task?.completed}
-              onClick={()=>setOpenCompleteModal(!openCompleteModal)}
+              onClick={()=>{setOpenCompleteModal(!openCompleteModal); setCurrentTask(task)}}
             >
               <CheckMarkIcon />
             </button>
-            <button className="mr-2" onClick={()=>setOpenDeleteModal(!openDeleteModal)}>
+            <button className="mr-2" onClick={()=>{setOpenDeleteModal(!openDeleteModal); setCurrentTask(task)}}>
               <TrashCan />
             </button>
             <MorePopover
@@ -133,10 +114,10 @@ const TaskCard = ({ task }) => {
       </div>
       <ModifySubtaskModal />
       <ModifyModal />
-      <DeleteModal taskId={task._id} />
-      <EditTaskModal taskId={task._id} taskTitle={task.title} />
-      <AddSubtaskModal taskId={task._id} />
-      <CompleteModal taskId={task._id} taskTitle={task.title} />
+      <DeleteModal  />
+      <EditTaskModal />
+      <AddSubtaskModal />
+      <CompleteModal />
     </>
   );
 };

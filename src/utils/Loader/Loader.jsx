@@ -8,7 +8,7 @@ const Loader = ({color}) => {
         height={24}
         width={70}
         radius={9}
-        color={color? color :"#ffffff"}
+        color={color? color :"#C13DFF"}
         ariaLabel="bars-loading"
         visible={true}
       />
