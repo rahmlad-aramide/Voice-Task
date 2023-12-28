@@ -88,14 +88,14 @@ const TaskCard = ({ task }) => {
           <div className="flex items-center">
             <button
               className="mr-2"
-              disabled={task?.completed}
+              // disabled={task?.completed}
               onClick={handleStar}
             >
               <StarIcon isStarred={isStarred} />
             </button>
             <button
               className="mr-2"
-              disabled={task?.completed}
+              // disabled={task?.completed}
               onClick={()=>{setOpenCompleteModal(!openCompleteModal); setCurrentTask(task)}}
             >
               <CheckMarkIcon />

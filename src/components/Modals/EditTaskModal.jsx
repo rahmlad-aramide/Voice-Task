@@ -94,7 +94,7 @@ const EditTaskModal = () => {
   if (!openEditModal) return null;
 
   return (
-    <div className="fixed top-0 left-0 w-full h-screen sm:h-full flex items-center justify-center bg-black bg-opacity-50 z-50">
+    <div className="fixed top-0 left-0 w-full h-screen sm:h-full flex items-center justify-center bg-black/30 z-50">
       <div className="bg-[#fff] w-[90%] max-w-[450px] mx-auto rounded-[10px] shadow-lg gap-y-5 p-6 sm:p-8 flex flex-col items-start h-fit max-h-[80vh] overflow-y-auto">
         <div className="bg-[#fff] w-full flex flex-col space-y-5">
           <div className="flex justify-between">
