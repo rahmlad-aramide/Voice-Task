@@ -17,7 +17,7 @@ const loadingParams = {
 export const notify = (val) => toast.success(`${val}`, toastParams);
 export const warn  = (val) => toast.warn(`${val}`, toastParams);
 export const error  = (val) => toast.error(`${val}`, toastParams);
-export const inform = (val) => toast.info(`${val}`, toastParams);
+export const inform = (val) => toast.info(`${val}`, {...toastParams, autoClose: 1000});
 export const loadingToast = (toastId, val) =>{
     if(! toast.isActive(toastId)) {
         toastId = toast.info(`${val}`, loadingParams);

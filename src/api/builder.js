@@ -21,10 +21,9 @@ export const builder = createBuilder({
     add_subtask: ({ taskId, data }) => {
       return USETOKEN.put(`/api/v1/task/${taskId}/subtask`, {todo:data});
     },
-    change_subtask_status: ({ taskId, subtaskId, data }) =>
+    change_subtask_status: ({ taskId, subtaskId }) =>
       USETOKEN.patch(
-        `/api/v1/task/${taskId}/substack/status?subtaskId=${subtaskId}`,
-        data
+        `/api/v1/task/${taskId}/subtask/status?subtaskId=${subtaskId}`
       ),
     change_subtask_todo: ({ taskId, subtaskId, data }) =>
       USETOKEN.patch(

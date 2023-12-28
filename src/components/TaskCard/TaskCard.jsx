@@ -1,17 +1,36 @@
 import { useState } from "react";
-import { AddSubtaskModal, DeleteModal, EditTaskModal, ModifyModal, MorePopover } from "..";
+import {
+  AddSubtaskModal,
+  DeleteModal,
+  EditTaskModal,
+  ModifyModal,
+  MorePopover,
+} from "..";
 import { CheckMarkIcon, StarIcon, TrashCan } from "../../assets/svg";
 import ModifySubtaskModal from "../Modals/ModifySubtaskModal";
 import { useModal } from "../../contexts/ModalContext/ModalContext";
 import { calculateProgressPercentage } from "../../utils/helper";
 import CompleteModal from "../Modals/CompleteModal";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { builder } from "../../api/builder";
+import {
+  errorToast,
+  inform
+} from "../../utils/toast";
 
 const TaskCard = ({ task }) => {
+  const queryClient = useQueryClient();
   const [openMore, setOpenMore] = useState(false);
   const [isStarred, setIsStarred] = useState(false);
-  const {setCurrentTask,openDeleteModal, setOpenDeleteModal, openCompleteModal, setOpenCompleteModal} = useModal();
+  const {
+    setCurrentTask,
+    openDeleteModal,
+    setOpenDeleteModal,
+    openCompleteModal,
+    setOpenCompleteModal,
+  } = useModal();
 
-  const progress = calculateProgressPercentage(task.subTasks)
+  const progress = calculateProgressPercentage(task.subTasks);
 
   const handleStar = () => {
     setIsStarred(!isStarred);
@@ -24,16 +43,38 @@ const TaskCard = ({ task }) => {
     false: "bg-gray-400",
   };
 
-  const SubTaskList = ({ subtask }) => {
-    const [completed, setCompleted] = useState(false);
+  const SubTaskList = ({ subtask, task }) => {
+    // const [completed, setCompleted] = useState(false);
+
+    // Change Subtask Status
+    const { mutate: changeSubtaskStatus, isPending: isChangingSubtaskStatus } =
+      useMutation({
+        mutationFn: builder.use().task.change_subtask_status,
+        onSuccess(data) {
+          console.log(data);
+          queryClient.invalidateQueries(builder.task.get_tasks.get());
+        },
+        onError(err) {
+          console.log("Error while changing task status:", err);
+          errorToast(
+            "updateToast",
+            `An error has occured ${err?.response?.data.message}`
+          );
+        },
+      });
 
     return (
       <li className="flex">
         <input
-          // disabled={isChangingTaskStatus}
+          disabled={isChangingSubtaskStatus}
           type="checkbox"
-          checked={completed}
-          onChange={() => setCompleted(!completed)}
+          checked={subtask.completed}
+          onChange={() => {
+            setTimeout(()=>{
+              changeSubtaskStatus({taskId: task._id, subtaskId: subtask._id})
+            },1000)
+            inform("Saving task status update...");
+          }}
           id={subtask._id}
           name={"subtask"}
           className="mr-2 md:mr-4 cursor-pointer"
@@ -65,7 +106,11 @@ const TaskCard = ({ task }) => {
           <ul>
             {task.subTasks.length > 0
               ? task.subTasks.map((subtask) => (
-                  <SubTaskList key={subtask._id} subtask={subtask} />
+                  <SubTaskList
+                    key={subtask._id}
+                    subtask={subtask}
+                    task={task}
+                  />
                 ))
               : "No subtask added to this task yet"}
           </ul>
@@ -74,13 +119,15 @@ const TaskCard = ({ task }) => {
         <div>
           <div className="h-[11px] w-full bg-grey-100 rounded-xl">
             <div
-              style={{width: task.completed? '100%' :progress}}
+              style={{ width: task.completed ? "100%" : progress }}
               className={`bg-primary/70 h-full rounded-xl`}
             ></div>
           </div>
           <div className="flex justify-between mt-1">
             <div className="text-grey-400 text-xs">Progress</div>
-            <div className="text-grey-600 text-sm">{task.completed? '100%' :progress}</div>
+            <div className="text-grey-600 text-sm">
+              {task.completed ? "100%" : progress}
+            </div>
           </div>
         </div>
         <div className="flex justify-between">
@@ -96,11 +143,20 @@ const TaskCard = ({ task }) => {
             <button
               className="mr-2"
               // disabled={task?.completed}
-              onClick={()=>{setOpenCompleteModal(!openCompleteModal); setCurrentTask(task)}}
+              onClick={() => {
+                setOpenCompleteModal(!openCompleteModal);
+                setCurrentTask(task);
+              }}
             >
               <CheckMarkIcon />
             </button>
-            <button className="mr-2" onClick={()=>{setOpenDeleteModal(!openDeleteModal); setCurrentTask(task)}}>
+            <button
+              className="mr-2"
+              onClick={() => {
+                setOpenDeleteModal(!openDeleteModal);
+                setCurrentTask(task);
+              }}
+            >
               <TrashCan />
             </button>
             <MorePopover
@@ -114,7 +170,7 @@ const TaskCard = ({ task }) => {
       </div>
       <ModifySubtaskModal />
       <ModifyModal />
-      <DeleteModal  />
+      <DeleteModal />
       <EditTaskModal />
       <AddSubtaskModal />
       <CompleteModal />
