@@ -30,7 +30,7 @@ function App() {
                 <Route path="/" element={<Navbar />}>
                   <Route path="*" element={<Error />} />
                     <Route index element={<Home />} />
-                  <Route element={<ProtectedRoute />}>
+                    <Route element={<ProtectedRoute />}>
                     <Route path="/dashboard" element={<Dashboard />} />
                   </Route>
                   <Route path="/test" element={<ChangePriority />} />

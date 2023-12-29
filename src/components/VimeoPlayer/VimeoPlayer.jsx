@@ -5,7 +5,7 @@ const VimeoPlayer = () => {
     <div style={{ position: 'relative', width: '100%', paddingTop: `${aspectRatio * 100}%` }}>
       <iframe
         title="vimeo-player"
-        src="https://player.vimeo.com/video/893579000?h=8a6ca2ca9d"
+        src="https://player.vimeo.com/video/898529973?h=c66cf63995"
         width="100%"
         height="100%"
         frameBorder="0"

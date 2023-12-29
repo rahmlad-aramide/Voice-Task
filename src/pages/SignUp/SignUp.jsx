@@ -1,15 +1,12 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import signUpImage from "../../assets/images/signup-img.png";
-import bottomWave from "../../assets/images/bottom-wave.svg";
 import { useMutation } from "@tanstack/react-query";
 import { builder } from "../../api/builder";
-import {
-  notify,
-  error,
-  warn,
-} from "../../utils/toast";
+import { notify, error, warn } from "../../utils/toast";
 import { Loader } from "../../utils";
+import signUpImage from "../../assets/images/signup-img.png";
+import bottomWave from "../../assets/images/bottom-wave.svg";
+import logo from "../../assets/logo.png";
 
 const defaultFields = {
   name: "",
@@ -33,10 +30,9 @@ const SignUp = () => {
 
   // Signup
   const { mutate, isPending } = useMutation({
-    // mutationKey: builder.auth.signup.get(),
+    mutationKey: builder.auth.signup.get(),
     mutationFn: builder.use().auth.signup,
-    onSuccess(data) {
-      console.log(data);
+    onSuccess() {
       notify("Successful! You're being redirected");
       setFields(defaultFields);
       setTimeout(() => {
@@ -48,19 +44,14 @@ const SignUp = () => {
       error(`Error: ${err.response.data.message}`);
     },
   });
-  // const handleSignup = () => {
-  //   if (fields.password !== fields.confirmPassword) {
-  //     warn("Password doesn't match!");
-  //     return;
-  //   }
-  //   mutate(fields);
-  // };
 
   return (
     <div className="relative h-full md:h-screen">
       <div className="w-[90%] max-w-[1200px] mx-auto h-full">
         <h1 className="text-[26px] text-primary font-medium pt-4 md:py-5">
-          <Link to="/">Voice Task</Link>
+          <Link to="/">
+            <img src={logo} alt="Voice Task" className="h-[50px]" />
+          </Link>
         </h1>
         <div className="flex flex-col md:flex-row justify-around items-center h-[calc(100%_-_170px)]">
           <div className="order-1 md:order-0 py-4 md:my-0 w-full md:w-1/2 overflow-y-auto h-full">
@@ -169,7 +160,7 @@ const SignUp = () => {
               <button
                 disabled={isPending}
                 type="submit"
-                className="bg-primary hover:bg-transparent disabled:scale-100 disabled:hover:bg-primary border border-primary text-white hover:text-primary active:scale-90 transition duration-200 font-medium p-2 rounded"
+                className="bg-primary hover:bg-purple-600 disabled:scale-100 disabled:bg-grey-300 disabled:hover:bg-grey-300 disabled:cursor-not-allowed text-white active:scale-90 transition duration-200 font-medium p-2 rounded"
               >
                 {isPending ? <Loader /> : "Signup"}
               </button>

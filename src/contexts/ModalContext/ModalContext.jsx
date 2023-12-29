@@ -3,6 +3,8 @@ import { createContext, useContext, useState } from "react";
 export const ModalContext = createContext();
 
 const ModalProvider = ({ children }) => {
+  const [openProfile, setOpenProfile] = useState(false);
+  const [openNotification, setOpenNotification] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
   const [currentTask, setCurrentTask] = useState({});
@@ -16,6 +18,10 @@ const ModalProvider = ({ children }) => {
       value={{
         currentTask,
         setCurrentTask,
+        openProfile,
+        setOpenProfile,
+        openNotification,
+        setOpenNotification,
         openModal,
         setOpenModal,
         openEditModal,
